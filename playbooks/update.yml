@@ -1,0 +1,16 @@
+---
+# playbook for updating rpis
+
+- hosts: piholes
+  any_errors_fatal: true
+  gather_facts: true
+  become: true
+  tasks:
+  - name: update system
+    apt:
+      name: "*"
+      state: latest      
+      update_cache: yes
+
+  - name: update pihole
+    command: 'pihole -up'
