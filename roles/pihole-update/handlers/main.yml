@@ -1,0 +1,9 @@
+---
+# handlers file for pihole-update
+- name: reboot raspberry pi
+  reboot:
+
+- name: restart pihole-FTL
+  systemd:
+    state: restarted
+    name: pihole-FTL
