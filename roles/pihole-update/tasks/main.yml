@@ -13,8 +13,8 @@
     - reboot raspberry pi
 
 - name: backup pihole
-  chdir: "{{ syncthing_dir }}"
   command: 'pihole -a -t'
+    chdir: "{{ syncthing_dir }}"
 
 - name: update pihole
   command: 'pihole -up'
