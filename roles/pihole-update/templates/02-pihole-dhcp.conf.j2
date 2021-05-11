@@ -1,0 +1,17 @@
+###############################################################################
+#  DHCP SERVER CONFIG FILE AUTOMATICALLY POPULATED BY PI-HOLE WEB INTERFACE.  #
+#            ANY CHANGES MADE TO THIS FILE WILL BE LOST ON CHANGE             #
+###############################################################################
+dhcp-authoritative
+dhcp-range=172.16.1.2,172.16.1.251,24h
+dhcp-option=option:router,172.16.1.1
+{% if ansible_hostname == 'green' %}
+dhcp-option=6,172.16.1.253,172.16.1.254
+{% endif %}
+{% if ansible_hostname == 'blue' %}
+dhcp-option=6,172.16.1.254,172.16.1.253
+{% endif %}
+dhcp-leasefile=/etc/pihole/dhcp.leases
+#quiet-dhcp
+
+domain=orbital.local

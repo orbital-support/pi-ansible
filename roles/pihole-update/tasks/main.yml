@@ -1,0 +1,28 @@
+---
+# tasks file for pihole-update
+
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: update system
+  apt:
+    name: "*"
+    state: latest
+  notify:
+    - reboot raspberry pi
+
+- name: backup pihole
+  chdir: "{{ syncthing_dir }}"
+  command: 'pihole -a -t'
+
+- name: update pihole
+  command: 'pihole -up'
+
+- name: update dnsmasq configuration to allow active-active dns
+  template:
+    src: 02-pihole-dhcp.conf.j2
+    dest: /etc/dnsmasq.d/02-pihole-dhcp.conf
+    backup: yes
+  notify:
+    - restart pihole-FTL
