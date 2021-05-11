@@ -17,6 +17,10 @@
     notify:
       - reboot raspberry pi
 
+  - name: backup pihole
+    chdir: "{{ syncthing_dir }}"
+    command: 'pihole -a -t'
+
   - name: update pihole
     command: 'pihole -up'
 
