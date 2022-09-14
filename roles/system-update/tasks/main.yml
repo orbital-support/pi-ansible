@@ -1,0 +1,13 @@
+---
+# tasks file for pihole-update
+
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: update system
+  apt:
+    name: "*"
+    state: latest
+  notify:
+    - reboot raspberry pi
