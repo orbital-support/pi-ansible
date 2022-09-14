@@ -2,12 +2,30 @@
 # tasks file for pihole-update
 
 - name: update apt cache
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
 
-- name: update system
-  apt:
+- name: update managed system
+  ansible.builtin.apt:
     name: "*"
     state: latest
   notify:
-    - reboot raspberry pi
+    - reboot managed system
+  when:
+    - controller is undefined
+
+- name: update controller system
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+  notify:
+    - reboot controller
+  when:
+    - controller is defined
+    - controller | bool
+
+
+
+
+
+

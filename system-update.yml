@@ -1,0 +1,9 @@
+---
+# playbook for updating rpis
+
+- hosts: all
+  any_errors_fatal: true
+  gather_facts: true
+  become: true
+  roles:
+    - system-update

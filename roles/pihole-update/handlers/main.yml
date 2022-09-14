@@ -1,6 +1,6 @@
 ---
 # handlers file for pihole-update
 - name: restart pihole-FTL
-  systemd:
+  ansible.builtin.systemd:
     state: restarted
     name: pihole-FTL

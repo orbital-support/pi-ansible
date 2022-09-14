@@ -2,15 +2,17 @@
 # tasks file for pihole-update
 
 - name: backup pihole
-  command: 'pihole -a -t'
+  ansible.builtin.command: 
+   cmd: 'pihole -a -t'
   args:
     chdir: "{{ syncthing_dir }}"
 
 - name: update pihole
-  command: 'pihole -up'
+  ansible.builtin.command: 
+    cmd: 'pihole -up'
 
 - name: update dnsmasq configuration to allow active-active dns
-  template:
+  ansible.builtin.template:
     src: 02-pihole-dhcp.conf.j2
     dest: /etc/dnsmasq.d/02-pihole-dhcp.conf
     backup: yes
