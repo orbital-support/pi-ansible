@@ -3,26 +3,37 @@
 
 - name: update apt cache
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: yes    
 
-- name: update managed system
+- name: update managed system packages
   ansible.builtin.apt:
     name: "*"
     state: latest
+    upgrade: dist
   notify:
     - reboot managed system
   when:
     - controller is undefined
 
-- name: update controller system
+- name: update controller system packages
   ansible.builtin.apt:
     name: "*"
     state: latest
+    upgrade: dist
   notify:
     - reboot controller
   when:
     - controller is defined
     - controller | bool
+
+- name: update omv system packages
+  ansible.builtin.command:
+    cmd: 'omv-update'
+  notify:
+    - reboot controller
+  when:
+    - omv is defined
+    - omv | bool    
 
 
 
