@@ -23,18 +23,3 @@
   when:
     - controller is defined
     - controller | bool
-
-- name: update omv system packages
-  ansible.builtin.command:
-    cmd: 'omv-upgrade'
-  notify:
-    - reboot controller
-  when:
-    - omv is defined
-    - omv | bool    
-
-
-
-
-
-
