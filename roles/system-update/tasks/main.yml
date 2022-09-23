@@ -9,7 +9,6 @@
   ansible.builtin.apt:
     name: "*"
     state: latest
-    upgrade: dist
   notify:
     - reboot managed system
   when:
@@ -19,7 +18,6 @@
   ansible.builtin.apt:
     name: "*"
     state: latest
-    upgrade: dist
   notify:
     - reboot controller
   when:
