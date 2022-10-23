@@ -2,8 +2,3 @@
 # handlers file for pihole-update
 - name: reboot managed system
   ansible.builtin.reboot:
-
-- name: reboot controller
-  ansible.builtin.command:
-    cmd: 'systemctl reboot'
-

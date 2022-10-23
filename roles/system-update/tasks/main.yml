@@ -18,8 +18,13 @@
   ansible.builtin.apt:
     name: "*"
     state: latest
-  notify:
-    - reboot controller
+  when:
+    - controller is defined
+    - controller | bool
+
+- name: reboot controller
+  ansible.builtin.command:
+    cmd: 'systemctl reboot'
   when:
     - controller is defined
     - controller | bool
