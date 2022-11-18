@@ -15,9 +15,8 @@
     - controller is undefined
 
 - name: update controller system packages
-  ansible.builtin.apt:
-    name: "*"
-    state: latest
+  ansible.builtin.command:
+    cmd: 'omv-upgrade'
   when:
     - controller is defined
     - controller | bool
