@@ -24,7 +24,7 @@
 - name: copy metrics publishing script into place
   ansible.builtin.copy:
     src: "{{ role_path }}/files/publish-metrics.sh"
-    dest: /etc/publish-metrics.sh
+    dest: /usr/local/bin/publish-metrics.sh
     mode: 0755
 
 - name: start nginx
