@@ -5,7 +5,7 @@
   ansible.builtin.apt:
     update_cache: yes    
 
-- name: install nginx
+- name: install dependencies
   ansible.builtin.apt:
     name:
       - apache2
