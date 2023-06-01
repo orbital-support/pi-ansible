@@ -21,6 +21,12 @@
     src: "{{ role_path }}/files/nginx.conf"
     dest: /etc/nginx/nginx.conf
 
+- name: copy metrics publishing script into place
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/publish-metrics.sh"
+    dest: /etc/publish-metrics.sh
+    mode: 0755
+
 - name: start nginx
   ansible.builtin.systemd:
     enabled: true
@@ -31,4 +37,4 @@
   ansible.builtin.cron:
     name: "15 minute cron to publish temperature readings as prometheus data"
     minute: "*/15"
-    job: "temper.py --json | jq -r '.[0] | {\"external temperature\", \"internal temperature\"} | .[\"external\"] = .\"external temperature\" | .[\"internal\"] = .\"internal temperature\" | del(.\"internal temperature\" , .\"external temperature\") |keys_unsorted[] as $k |\"\\($k) \\(.[$k])\"' > /usr/share/nginx/html/metrics"
+    job: "publish-metrics.sh"

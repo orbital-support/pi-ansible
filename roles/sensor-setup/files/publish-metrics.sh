@@ -1,0 +1,2 @@
+#!/bin/bash
+temper.py --json | jq -r '.[0] | {"external temperature", "internal temperature"} | .["external"] = ."external temperature" | .["internal"] = ."internal temperature" | del(."internal temperature" , ."external temperature") |keys_unsorted[] as $k | "\($k) \(.[$k])"' > /usr/share/nginx/html/metrics
