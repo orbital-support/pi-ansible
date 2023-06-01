@@ -33,8 +33,14 @@
     state: restarted
     name: nginx
 
+- name: sets PATH environment variable for crontab
+  ansible.builtin.cron:
+    name: PATH
+    job: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    env: yes
+    
 - name: create cronjob to write temperatur values to file
   ansible.builtin.cron:
     name: "publish-promethus-data"
     minute: "*/15"
-    job: "publish-metrics.sh"
+    job: "/usr/local/bin/publish-metrics.sh"
