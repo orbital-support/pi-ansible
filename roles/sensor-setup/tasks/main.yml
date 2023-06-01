@@ -8,23 +8,23 @@
 - name: install nginx
   ansible.builtin.apt:
     name:
-      - nginx
+      - apache2
       - jq
     state: present
 
-- name: copy nginx config into place
-  ansible.builtin.copy:
-    src: "{{ role_path }}/files/nginx.conf"
-    dest: /etc/nginx/nginx.conf
+# - name: copy apache config into place
+#   ansible.builtin.copy:
+#     src: "{{ role_path }}/files/apache2.conf"
+#     dest: /etc/apache2/
 
-- name: start nginx
-  ansible.builtin.systemd:
-    enabled: true
-    state: started
-    name: nginx
+# - name: start apache
+#   ansible.builtin.systemd:
+#     enabled: true
+#     state: started
+#     name: apache
 
 - name: create cronjob to write temperatur values to file
   ansible.builtin.cron:
     name: "15 minute cron to publish temperature readings as prometheus data"
     minute: "*/15"
-    job: "temper.py --json | jq -r '.[0] | {\"external temperature\", \"internal temperature\"} | .[\"external\"] = .\"external temperature\" | .[\"internal\"] = .\"internal temperature\" | del(.\"internal temperature\" , .\"external temperature\") |keys_unsorted[] as $k |\"\\($k) \\(.[$k])\"' > /usr/share/nginx/html/metrics"
+    job: "temper.py --json | jq -r '.[0] | {\"external temperature\", \"internal temperature\"} | .[\"external\"] = .\"external temperature\" | .[\"internal\"] = .\"internal temperature\" | del(.\"internal temperature\" , .\"external temperature\") |keys_unsorted[] as $k |\"\\($k) \\(.[$k])\"' > /var/www/html/metrics"
