@@ -24,7 +24,7 @@
 - name: start nginx
   ansible.builtin.systemd:
     enabled: true
-    state: started
+    state: restarted
     name: nginx
 
 - name: create cronjob to write temperatur values to file
