@@ -35,6 +35,6 @@
 
 - name: create cronjob to write temperatur values to file
   ansible.builtin.cron:
-    name: "15 minute cron to publish temperature readings as prometheus data"
+    name: "publish-promethus-data"
     minute: "*/15"
     job: "publish-metrics.sh"
