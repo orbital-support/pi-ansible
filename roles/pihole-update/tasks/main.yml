@@ -11,6 +11,14 @@
   ansible.builtin.command: 
     cmd: 'pihole -up'
 
+- name: add ninas work laptop domain to dnsmasq 
+  ansible.builtin.template:
+    src: 07-nina-work-laptop.conf.j2
+    dest: /etc/dnsmasq.d/02-pihole-dhcp.conf
+    backup: yes
+  notify:
+    - restart pihole-FTL
+
 - name: update dnsmasq configuration to allow active-active dns
   ansible.builtin.template:
     src: 02-pihole-dhcp.conf.j2
