@@ -21,6 +21,11 @@
     name: python3-pip
     state: present
 
+- name: Remove EXTERNALLYMANAGED
+  ansible.builtin.file:
+    path: /usr/lib/python3.11/EXTERNALLY-MANAGED
+    state: absent
+
 - name: install bm688 software
   ansible.builtin.pip:
     name: bme680
