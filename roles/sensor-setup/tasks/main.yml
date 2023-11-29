@@ -47,7 +47,6 @@
   ansible.builtin.git:
     repo: 'https://github.com/pimoroni/bme680-python'
     dest: /opt/bme688/
-    bare: true
   when:
     - sensor is defined
     - sensor == "bme688"
