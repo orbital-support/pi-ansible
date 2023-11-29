@@ -26,7 +26,7 @@
     name: bme680
   when:
     - sensor is defined
-    - sensor is == "bm688"
+    - sensor == "bm688"
 
 - name: copy nginx config into place
   ansible.builtin.copy:
@@ -40,7 +40,7 @@
     mode: 0755
   when:
     - sensor is defined
-    - sensor is == "temper"
+    - sensor == "temper"
 
 - name: start nginx
   ansible.builtin.systemd:
@@ -61,4 +61,4 @@
     job: "/usr/local/bin/publish-metrics.sh"
   when:
     - sensor is defined
-    - sensor is == "temper"
+    - sensor == "temper"
