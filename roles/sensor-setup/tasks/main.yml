@@ -98,7 +98,7 @@
 - name: create cronjob to write bme688 values to file
   ansible.builtin.cron:
     name: "publish-prometheus-data"
-    minute: "*/15"
+    minute: "*/5"
     job: "/usr/local/bin/bme688-read-temperature.py -o /usr/share/nginx/html/metrics"
   when:
     - sensor is defined
