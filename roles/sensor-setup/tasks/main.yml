@@ -16,6 +16,18 @@
     name: jq
     state: present
 
+- name: install pip
+  ansible.builtin.apt:
+    name: pip
+    state: present
+
+- name: install bm688 software
+  ansible.builtin.pip:
+    name: bme680
+  when:
+    - sensor is defined
+    - sensor is == "bm688"
+
 - name: copy nginx config into place
   ansible.builtin.copy:
     src: "{{ role_path }}/files/nginx.conf"
@@ -26,6 +38,9 @@
     src: "{{ role_path }}/files/publish-metrics.sh"
     dest: /usr/local/bin/publish-metrics.sh
     mode: 0755
+  when:
+    - sensor is defined
+    - sensor is == "temper"
 
 - name: start nginx
   ansible.builtin.systemd:
@@ -44,3 +59,6 @@
     name: "publish-promethus-data"
     minute: "*/15"
     job: "/usr/local/bin/publish-metrics.sh"
+  when:
+    - sensor is defined
+    - sensor is == "temper"
