@@ -26,12 +26,26 @@
     path: /usr/lib/python3.11/EXTERNALLY-MANAGED
     state: absent
 
-- name: install bm688 software
+- name: install bme688 software
   ansible.builtin.pip:
     name: bme680
   when:
     - sensor is defined
-    - sensor == "bm688"
+    - sensor == "bme688"
+
+- name: create bme688 directory
+  ansible.builtin.file:
+    path: /opt/bme688/
+    state: directory
+
+- name: install bme688 examples
+  ansible.builtin.git:
+    repo: 'https://github.com/pimoroni/bme680-python'
+    dest: /opt/bme688/
+    bare: true
+  when:
+    - sensor is defined
+    - sensor == "bme688"
 
 - name: copy nginx config into place
   ansible.builtin.copy:
