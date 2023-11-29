@@ -65,6 +65,15 @@
     - sensor is defined
     - sensor == "temper"
 
+- name: copy metrics publishing script into place
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/bme688-read-temperature.py"
+    dest: /usr/local/bin/bme688-read-temperature.py
+    mode: 0755
+  when:
+    - sensor is defined
+    - sensor == "bme688"
+
 - name: start nginx
   ansible.builtin.systemd:
     enabled: true
