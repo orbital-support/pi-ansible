@@ -86,11 +86,20 @@
     job: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     env: yes
     
-- name: create cronjob to write temperatur values to file
+- name: create cronjob to write temper temperature values to file
   ansible.builtin.cron:
-    name: "publish-promethus-data"
+    name: "publish-prometheus-data"
     minute: "*/15"
     job: "/usr/local/bin/publish-metrics.sh"
   when:
     - sensor is defined
     - sensor == "temper"
+
+- name: create cronjob to write bme688 values to file
+  ansible.builtin.cron:
+    name: "publish-prometheus-data"
+    minute: "*/15"
+    job: "/usr/local/bin/bme688-read-temperature.py -o /usr/share/nginx/html/metrics"
+  when:
+    - sensor is defined
+    - sensor == "bme688"
