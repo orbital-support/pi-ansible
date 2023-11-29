@@ -18,7 +18,7 @@
 
 - name: install pip
   ansible.builtin.apt:
-    name: pip
+    name: python3-pip
     state: present
 
 - name: install bm688 software
