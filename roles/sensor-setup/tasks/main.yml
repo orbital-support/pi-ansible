@@ -89,7 +89,7 @@
 - name: create cronjob to write temper temperature values to file
   ansible.builtin.cron:
     name: "publish-prometheus-data"
-    minute: "*/15"
+    minute: "*/5"
     job: "/usr/local/bin/publish-metrics.sh"
   when:
     - sensor is defined
