@@ -13,8 +13,8 @@
 
 - name: add ninas work laptop domain to dnsmasq 
   ansible.builtin.template:
-    src: 07-nina-work-laptop.conf.j2
-    dest: /etc/dnsmasq.d/07-nina-work-laptop.conf
+    src: 99-domains.conf.j2
+    dest: /etc/dnsmasq.d/99-domains.conf
     backup: yes
   notify:
     - restart pihole-FTL
