@@ -1,0 +1,7 @@
+- hosts: piholes
+  any_errors_fatal: true
+  gather_facts: true
+  become: true
+  tasks:
+  - name: reboot
+    ansible.builtin.reboot:
