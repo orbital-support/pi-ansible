@@ -3,7 +3,7 @@
 #            ANY CHANGES MADE TO THIS FILE WILL BE LOST ON CHANGE             #
 ###############################################################################
 dhcp-authoritative
-dhcp-range=172.16.1.2,172.16.1.251,24h
+dhcp-range=172.16.1.2,172.16.1.251,1h
 dhcp-option=option:router,172.16.1.1
 {% if ansible_hostname == 'green' %}
 dhcp-option=6,172.16.1.253,172.16.1.254
