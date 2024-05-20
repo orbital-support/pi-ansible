@@ -1,0 +1,4 @@
+---
+prometheus_lts_dist: https://github.com/prometheus/prometheus/releases/download/v2.45.5/prometheus-2.45.5.linux-arm64.tar.gz
+prometheus_conf_dir: /opt/prometheus
+prometheus_data_dir: /mnt/share2/prometheus

@@ -1,0 +1,113 @@
+---
+# configured as per https://github.com/grafana/grafana-ansible-collection/blob/main/roles/grafana/defaults/main.yml
+grafana_instance: "{{ ansible_fqdn | default(ansible_host) | default(inventory_hostname) }}"
+grafana_domain: "{{ ansible_fqdn | default(ansible_host) | default('localhost') }}"
+grafana_address: "{{ ansible_host }}"
+grafana_port: 3000
+grafana_url: "http://{{ grafana_address }}:{{ grafana_port }}"
+grafana_api_url: "{{ grafana_url }}"
+grafana_logs_dir: /var/log/grafana
+grafana_data_dir: /mnt/share2/grafana
+
+grafana_security:
+  admin_user: "admin"
+  admin_password: ""
+
+grafana_server:
+  protocol: http
+  enforce_domain: false
+  socket: ""
+  cert_key: ""
+  cert_file: ""
+  enable_gzip: false
+  static_root_path: public
+  router_logging: false
+  serve_from_sub_path: false
+
+grafana_database:
+  type: sqlite3
+
+grafana_datasources:
+  - name: "Prometheus"
+    type: "prometheus"
+    access: "proxy"
+    url: "http://127.0.0.1:9090"
+    isDefault: true
+    jsonData:
+      tlsAuth: false
+      tlsAuthWithCACert: false
+      tlsSkipVerify: true
+
+# User management and registration
+grafana_welcome_email_on_sign_up: false
+grafana_users:
+  allow_sign_up: false
+  # allow_org_create: true
+  # auto_assign_org: true
+  auto_assign_org_role: Viewer
+  # login_hint: "email or username"
+  default_theme: dark
+  # external_manage_link_url: ""
+  # external_manage_link_name: ""
+  # external_manage_info: ""
+
+# grafana authentication mechanisms
+grafana_auth: {}
+
+grafana_remote_cache: {} 
+
+grafana_ldap: {}
+
+# Grafana KeyCloak auth
+grafana_auth_generic_oauth: {}
+
+grafana_session: {}
+
+grafana_analytics: {}
+
+# Set this for mail notifications
+grafana_smtp: {}
+
+# Enable grafana alerting mechanism
+grafana_alerting:
+  execute_alerts: false
+# Grafana logging configuration
+grafana_log:
+
+# Internal grafana metrics system
+grafana_metrics: {}
+
+# Distributed tracing options
+grafana_tracing: {}
+
+grafana_snapshots: {}
+
+# External image store
+grafana_image_storage: {}
+
+# Date format
+grafana_date_formats: {}
+
+# Feature toggles
+# List of feature toggles: https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/feature-toggles/#feature-toggles
+grafana_feature_toggles: {}
+
+# Plugins from https://grafana.com/plugins
+grafana_plugins: []
+
+# Dashboards from https://grafana.com/dashboards
+grafana_dashboards: []
+
+grafana_dashboards_dir: "dashboards"
+
+# Alert notification channels to configure
+grafana_alert_notifications: []
+
+grafana_alert_resources: {}
+
+# The location where the keys should be stored.
+grafana_api_keys_dir: "{{ grafana_data_dir }}/keydump"
+
+grafana_environment: {}
+
+grafana_panels: {}

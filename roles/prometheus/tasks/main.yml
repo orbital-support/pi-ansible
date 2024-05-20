@@ -1,0 +1,74 @@
+---
+- name: ensure prometheus group exists
+  ansible.builtin.group:
+    name: prometheus
+    state: present
+
+- name: add the prometheus user
+  ansible.builtin.user:
+    name: prometheus
+    groups: prometheus
+
+- name: create working directorys
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    recurse: true
+  with_items:
+    - "{{ prometheus_conf_dir }}"
+    - "{{ prometheus_data_dir }}"
+
+- name: download prometheus lts
+  ansible.builtin.get_url:
+    url: "{{ prometheus_lts_dist }}"
+    dest: /tmp/
+    mode: '0644'
+  register: prometheus_tarball
+
+- name: extract prometheus to target folder
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: "{{ prometheus_tarball.dest }}"
+    dest: "{{ prometheus_conf_dir }}"
+    list_files: yes
+    owner: prometheus
+    group: prometheus
+  register: prometheus_tarbell_content
+
+- name: set output directory fact
+  ansible.builtin.set_fact:
+    prometheus_dir: "{{ prometheus_conf_dir }}/{{ prometheus_tarbell_content.files[0] }}"
+
+- name: copy prometheus and promtool to path
+  ansible.builtin.copy:
+    src: "{{ prometheus_dir }}/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    remote_src: yes
+    owner: prometheus
+    group: prometheus
+    mode: +x
+  with_items: 
+    - prometheus
+    - promtool
+
+- name: configure prometheus
+  ansible.builtin.template:
+    src: "prometheus.yml.j2"
+    dest: "{{ prometheus_dir }}/prometheus.yml"
+    force: true
+    owner: 
+    mode: 0640
+  notify:
+    - reload prometheus
+
+- name: create systemd service unit
+  ansible.builtin.template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+  notify:
+    - restart prometheus

@@ -1,0 +1,9 @@
+---
+- hosts: omv
+  any_errors_fatal: true
+  gather_facts: true
+  become: true
+  roles:
+    - samba
+    - prometheus
+    - grafana

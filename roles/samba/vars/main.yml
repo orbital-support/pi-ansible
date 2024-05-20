@@ -1,0 +1,6 @@
+---
+disks:
+  - name: "share1"
+    uuid: "7c41b011-7910-4672-94d8-cc85839f853a"
+  - name: "share2"
+    uuid: "3d393d1c-207f-41c9-8469-9cdfcb43aa82"

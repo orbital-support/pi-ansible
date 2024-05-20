@@ -1,0 +1,29 @@
+#
+# Sample configuration file for the Samba suite for Debian GNU/Linux.
+#
+#
+
+[global]
+   workgroup = WORKGROUP
+   server string = Samba Server
+   security = user
+   map to guest = Bad User
+   guest account = nobody
+   smb ports = 445
+   min protocol = SMB2
+   max protocol = SMB3
+
+{% for disk in disks %}
+[{{ disk.name }}]
+   path = /mnt/{{ disk.name }}
+   browsable = yes
+   guest ok = yes
+   read only = yes
+   force user = nobody
+   create mask = 0755
+   directory mask = 0755
+   valid users = svc-smb
+   write list = svc-smb
+   force create mode = 0775
+   force directory mode = 0775
+{% endfor %}

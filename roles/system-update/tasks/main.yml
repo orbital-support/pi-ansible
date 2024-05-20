@@ -1,9 +1,19 @@
 ---
-# tasks file for pihole-update
+# tasks file for system-update
+
+- name: install vim
+  ansible.builtin.apt:
+    name: vim
+    state: latest
 
 - name: update apt cache
   ansible.builtin.apt:
-    update_cache: yes    
+    update_cache: yes 
+
+- name: update hosts file
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts   
 
 - name: update managed system packages
   ansible.builtin.apt:
@@ -11,19 +21,3 @@
     state: latest
   notify:
     - reboot managed system
-  when:
-    - controller is undefined
-
-- name: update controller system packages
-  ansible.builtin.command:
-    cmd: 'omv-upgrade'
-  when:
-    - controller is defined
-    - controller | bool
-
-- name: reboot controller
-  ansible.builtin.command:
-    cmd: 'systemctl reboot'
-  when:
-    - controller is defined
-    - controller | bool

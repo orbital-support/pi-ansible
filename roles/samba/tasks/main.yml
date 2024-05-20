@@ -1,0 +1,54 @@
+---
+- name: create mount points
+  ansible.builtin.file:
+    path: "/mnt/{{ item.name }}"
+    state: directory
+    mode: '0755'
+    group: nogroup
+    owner: nobody
+  with_items: "{{ disks }}"
+  
+- name: mount drives to be shared
+  ansible.posix.mount:
+    path: "/mnt/{{ item.name }}"
+    src: "UUID={{ item.uuid }}"
+    fstype: ext4
+    state: mounted
+  with_items: "{{ disks }}"
+
+- name: ensure samba-related packages are installed (Debian).
+  ansible.builtin.apt:
+    name:
+      - samba
+      - samba-common
+      - python3-pip
+      - python3-pexpect
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: add the smb user
+  ansible.builtin.user:
+    name: "svc-smb"
+    password: "{{ svc_smb_passwd | password_hash('sha512', 'orbitaldrop') }}"
+    comment: Service Samba
+    groups: sambashare
+
+- name: set samba password for user svc-smb
+  ansible.builtin.expect:
+    command: smbpasswd -a svc-smb
+    responses:
+      "New SMB password:": "{{ svc_smb_passwd }}"
+      "Retype new SMB password:": "{{ svc_smb_passwd }}"
+  no_log: true
+
+- name: configure samba
+  ansible.builtin.template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+  notify: restart samba
+
+- name: ensure samba is running and set to start on boot.
+  ansible.builtin.service:
+    name: smbd
+    state: started
+    enabled: true

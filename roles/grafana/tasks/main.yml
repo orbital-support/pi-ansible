@@ -1,0 +1,133 @@
+---
+- name: create working directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  with_items: 
+    - "{{ grafana_data_dir }}"
+    - "{{ grafana_data_dir }}/uploads"
+
+- name: ensure grafana dependencies are installed
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https 
+      - software-properties-common
+      - python3-debian
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: add grafana apt repository
+  ansible.builtin.deb822_repository:
+    name: grafana
+    types: [deb]
+    uris: "https://apt.grafana.com"
+    signed_by: "https://apt.grafana.com/gpg.key"
+    suites: [stable]
+    components: [main]
+    state: present
+    enabled: yes
+
+- name: install grafana
+  ansible.builtin.apt:
+    name:
+      - grafana
+    state: present
+    update_cache: true
+  when: ansible_os_family == 'Debian'
+
+- name: ensure grafana is running and set to start on boot.
+  ansible.builtin.service:
+    name: grafana-server
+    state: started
+    enabled: true
+
+- name: "ensure grafana directories exist"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "directory"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('grafana') }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop:
+    - path: "/etc/grafana"
+    - path: "/etc/grafana/datasources"
+    - path: "/etc/grafana/provisioning"
+    - path: "/etc/grafana/provisioning/datasources"
+    - path: "/etc/grafana/provisioning/dashboards"
+    - path: "/etc/grafana/provisioning/notifiers"
+    - path: "/etc/grafana/provisioning/notification"
+    - path: "/etc/grafana/provisioning/plugins"
+    - path: "{{ grafana_logs_dir }}"
+      owner: grafana
+    - path: "{{ grafana_data_dir }}"
+      owner: grafana
+    - path: "{{ grafana_data_dir }}/dashboards"
+      owner: grafana
+    - path: "{{ grafana_data_dir }}/uploads"
+      owner: grafana
+    - path: "{{ grafana_data_dir }}/plugins"
+      owner: grafana
+
+- name: "create grafana main configuration file"
+  ansible.builtin.template:
+    src: "grafana.ini.j2"
+    dest: "/etc/grafana/grafana.ini"
+    owner: "root"
+    group: "grafana"
+    mode: "0640"
+  notify: restart_grafana
+
+- name: "ensure datasources exist via api"
+  community.grafana.grafana_datasource:
+    grafana_url: "{{ grafana_api_url }}"
+    grafana_user: "{{ grafana_security.admin_user }}"
+    grafana_password: "{{ grafana_security.admin_password }}"
+    name: "{{ item.name }}"
+    ds_url: "{{ item.url }}"
+    ds_type: "{{ item.type }}"
+    access: "{{ item.access | default(omit) }}"
+    is_default: "{{ item.isDefault | default(omit) }}"
+    basic_auth_user: "{{ item.basicAuthUser | default(omit) }}"
+    basic_auth_password: "{{ item.basicAuthPassword | default(omit) }}"
+    database: "{{ item.database | default(omit) }}"
+    user: "{{ item.user | default(omit) }}"
+    password: "{{ item.password | default(omit) }}"
+    aws_auth_type: "{{ item.aws_auth_type | default(omit) }}"
+    aws_default_region: "{{ item.aws_default_region | default(omit) }}"
+    aws_access_key: "{{ item.aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ item.aws_secret_key | default(omit) }}"
+    aws_credentials_profile: "{{ item.aws_credentials_profile | default(omit) }}"
+    aws_custom_metrics_namespaces: "{{ item.aws_custom_metrics_namespaces | default(omit) }}"
+  loop: "{{ grafana_datasources }}"
+  register: datasources
+  tags: 
+    - api_only
+
+- name: set datasource uid as fact
+  ansible.builtin.set_fact:
+    prometheus_datasource_uid:  "{{ datasources.results[0].datasource.uid }}"
+  tags: 
+    - api_only
+
+- name: "template out dashboards"
+  ansible.builtin.template:
+    src: "dashboard.json.j2"
+    dest: "{{ grafana_data_dir }}/uploads/"
+    owner: grafana
+    group: grafana
+    mode: '0644' 
+  register: uploaded_dashboard
+  tags: 
+    - api_only
+
+- name: "import grafana dashboards via api"
+  community.grafana.grafana_dashboard:
+    grafana_url: "{{ grafana_api_url }}"
+    grafana_user: "{{ grafana_security.admin_user }}"
+    grafana_password: "{{ grafana_security.admin_password }}"
+    path: "{{ uploaded_dashboard.dest }}"
+    commit_message: "updated by ansible role {{ ansible_role_name }}"
+    state: present
+    overwrite: true
+  tags: 
+    - api_only
