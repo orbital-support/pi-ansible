@@ -31,6 +31,23 @@
     path: /usr/lib/python3.11/EXTERNALLY-MANAGED
     state: absent
 
+- name: install temper-py python package
+  ansible.builtin.pip:
+    name: temper-py
+    extra_args: --user
+  when:
+    - sensor is defined
+    - sensor == "temper"
+
+- name: create symbolic link to temper-py from path
+  ansible.builtin.file:
+    src: /root/.local/lib/python3.11/site-packages/temper.py
+    dest: /usr/local/bin/temper
+    owner: root
+    group: root
+    state: link
+    mode: a+x
+
 - name: install bme688 software
   ansible.builtin.pip:
     name: bme680
