@@ -1,0 +1,6 @@
+---
+- name: restart boundary
+  ansible.builtin.service:
+    name: boundary
+    state: restarted
+    enabled: true

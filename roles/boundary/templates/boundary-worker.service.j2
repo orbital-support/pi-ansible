@@ -1,0 +1,13 @@
+[Unit]
+Description=boundary worker
+
+[Service]
+ExecStart=/usr/bin/boundary server -config /opt/boundary/private-worker.hcl
+User=boundary
+Group=boundary
+LimitMEMLOCK=infinity
+Capabilities=CAP_IPC_LOCK+ep
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+
+[Install]
+WantedBy=multi-user.target

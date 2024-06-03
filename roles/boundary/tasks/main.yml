@@ -1,0 +1,38 @@
+---
+- name: add hashicorp stable apt repository
+  ansible.builtin.deb822_repository:
+    name: hashicorp
+    types: [deb]
+    uris: "https://apt.releases.hashicorp.com"
+    signed_by: "https://apt.releases.hashicorp.com/gpg"
+    suites: ["{{ ansible_distribution_release|lower }}"]
+    components: [main]
+    state: present
+    enabled: yes
+
+- name: install hashicorp boundary from the apt repository
+  ansible.builtin.apt:
+    name: boundary-enterprise
+    state: present
+
+# - name: create systemd service unit
+#   ansible.builtin.template:
+#     src: private-worker.service.j2
+#     dest: /etc/systemd/system/private-worker.service
+#     owner: boundary
+#     group: boundary
+#     mode: 0644
+
+- name: get the last octet of the host's ip address
+  ansible.builtin.set_fact:
+    last_octet: "{{ ansible_default_ipv4.address.split('.')[-1] }}"
+
+- name: derive the port number for Boundary to listen on
+  ansible.builtin.set_fact:
+    boundary_port: "9{{ last_octet }}"
+
+- name: template the boundary configuration file
+  ansible.builtin.template:
+    src: private-worker.hcl.j2
+    dest: /etc/boundary.d/private-boundary.hcl
+  #notify: restart boundary
