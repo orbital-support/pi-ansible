@@ -14,6 +14,18 @@
   ansible.builtin.apt:
     name: boundary-enterprise
     state: present
+    update_cache: true
+
+- name: create working directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: boundary
+    group: boundary
+    recurse: true
+  with_items:
+    - "{{ boundary_working_directory }}"
+    - "{{ boundary_session_recording_directory }}"
 
 # - name: create systemd service unit
 #   ansible.builtin.template:
@@ -33,6 +45,6 @@
 
 - name: template the boundary configuration file
   ansible.builtin.template:
-    src: private-worker.hcl.j2
-    dest: /etc/boundary.d/private-boundary.hcl
-  #notify: restart boundary
+    src: egress-worker.hcl.j2
+    dest: /etc/boundary.d/boundary.hcl
+  notify: restart boundary

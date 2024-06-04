@@ -1,0 +1,19 @@
+disable_mlock = true
+
+hcp_boundary_cluster_id = "{{ boundary_cluster_id }}"
+
+listener "tcp" {
+  address = "0.0.0.0:{{ boundary_port }}"
+  purpose = "proxy"
+}
+
+worker {
+  controller_generated_activation_token = "{{ controller_generated_activation_token }}"
+  public_addr = "31.125.7.3:{{ boundary_port }}"
+  auth_storage_path = "{{ boundary_working_directory }}"
+  tags {
+    type = ["private"]
+  }
+  recording_storage_path = "{{ boundary_session_recording_directory }}"
+  recording_storage_minimum_available_capacity = "500MB"
+}

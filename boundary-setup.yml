@@ -1,0 +1,7 @@
+---
+- hosts: green.orbital.local, blue.orbital.local
+  any_errors_fatal: true
+  gather_facts: true
+  become: true
+  roles:
+    - boundary

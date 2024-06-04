@@ -1,0 +1,4 @@
+---
+boundary_working_directory: "/var/lib/boundary/"
+boundary_session_recording_directory: "/var/lib/boundary/recordings"
+boundary_cluster_id: "d67b8677-2f28-4e4b-981f-414958ae11b6"

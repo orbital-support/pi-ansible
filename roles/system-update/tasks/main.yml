@@ -6,6 +6,13 @@
     name: vim
     state: latest
 
+- name: ensure supporting ansible packages are installed
+  ansible.builtin.apt:
+    name:
+      - python3-debian
+    state: present
+  when: ansible_os_family == 'Debian'
+
 - name: update apt cache
   ansible.builtin.apt:
     update_cache: yes 
