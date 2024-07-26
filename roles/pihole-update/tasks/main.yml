@@ -11,6 +11,22 @@
   ansible.builtin.command: 
     cmd: 'pihole -up'
 
+- name: create whitelist directory
+  ansible.builtin.file:
+    path: /opt/whitelist/
+    state: directory
+
+- name: grab whitelist from source control
+  ansible.builtin.git:
+    repo: 'https://github.com/anudeepND/whitelist.git'
+    dest: /opt/whitelist/
+    force: true
+
+- name: run the whitelist update script
+  ansible.builtin.script:
+    chdir: whitelist/scripts/
+    cmd: whitelist.py
+
 - name: add ninas work laptop domain to dnsmasq 
   ansible.builtin.template:
     src: 99-domains.conf.j2
